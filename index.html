@@ -4,75 +4,128 @@
     <meta charset="UTF-8">
     <title>林深见鹿 · 梦入萤河</title>
     <style>
-        :root {
-            --bg-color: #04090f;
-            --text-color: rgba(220, 240, 225, 0.9);
-            --glow: 0 0 20px rgba(180, 255, 180, 0.3);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
+        body {
+            background-color: #04090f; /* 基础底色，防止黑屏感 */
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: "STKaiti", "KaiTi", serif;
+            font-family: "STKaiti", "KaiTi", "楷体", serif;
         }
 
-        /* 自然氛围背景 */
+        /* 渐变背景 - 模拟深夜林间 */
         .background {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 100%, #1a3c40 0%, #061014 70%);
-            z-index: -1;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 80%, #112d30 0%, #04090f 80%);
+            z-index: 1;
         }
 
-        /* 诗词容器：加长总时长，创造宁静感 */
+        /* 诗词容器 */
         .poem-wrapper {
+            position: relative;
             text-align: center;
-            z-index: 10;
+            z-index: 10; /* 确保在背景之上 */
         }
 
         .poem-line {
-            font-size: 1.6rem;
-            color: var(--text-color);
-            margin: 2rem 0;
+            font-size: 2rem;
+            color: rgba(220, 245, 225, 0.9);
+            margin: 2.5rem 0;
             letter-spacing: 0.8rem;
             opacity: 0;
-            filter: blur(10px);
-            /* 节奏核心：12秒一个循环，包含从模糊到清晰再到消失 */
-            animation: ethereal-fade 12s infinite ease-in-out;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            /* 节奏：12秒一个轮回 */
+            animation: ethereal-fade 12s infinite ease-in-out forwards;
         }
 
-        /* 逐行延迟：创造错落有致的流动感 */
+        /* 逐行错开时间 */
         .line-1 { animation-delay: 1s; }
-        .line-2 { animation-delay: 3s; }
-        .line-3 { animation-delay: 5s; }
-        .line-4 { animation-delay: 7s; }
+        .line-2 { animation-delay: 3.5s; }
+        .line-3 { animation-delay: 6s; }
+        .line-4 { animation-delay: 8.5s; }
 
         @keyframes ethereal-fade {
-            0% { opacity: 0; filter: blur(12px); transform: translateY(5px); }
-            20% { opacity: 1; filter: blur(0px); transform: translateY(0); }
-            70% { opacity: 1; filter: blur(0px); }
-            90% { opacity: 0; filter: blur(8px); }
+            0% { opacity: 0; filter: blur(10px); transform: translateY(10px); }
+            15% { opacity: 1; filter: blur(0px); transform: translateY(0); }
+            75% { opacity: 1; filter: blur(0px); }
+            95% { opacity: 0; filter: blur(5px); }
             100% { opacity: 0; }
         }
 
-        /* 萤火虫 */
+        /* 萤火虫基础样式 */
         .firefly {
             position: absolute;
             background: #e3ff73;
             border-radius: 50%;
-            opacity: 0.6;
-            filter: blur(1px);
-            box-shadow: 0 0 12px #f2ff00;
+            z-index: 5;
+            pointer-events: none;
+            box-shadow: 0 0 8px #f2ff00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <div class="poem-wrapper">
+        <p class="poem-line line-1">翠幕裁云掩旧扉</p>
+        <p class="poem-line line-2">寒星跌落碧琉璃</p>
+        <p class="poem-line line-3">晚风不解千林静</p>
+        <p class="poem-line line-4">拂过微光信步飞</p>
+    </div>
+
+    <script>
+        function createFirefly() {
+            const f = document.createElement('div');
+            f.className = 'firefly';
+            
+            // 随机大小和位置
+            const size = Math.random() * 4 + 1 + 'px';
+            f.style.width = size;
+            f.style.height = size;
+            
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            f.style.left = startX + 'px';
+            f.style.top = startY + 'px';
+            
+            // 随机动画时长
+            const duration = 8 + Math.random() * 10;
+            const opacity = 0.2 + Math.random() * 0.6;
+            
+            // 使用标准的 Web Animations API 确保兼容性
+            f.animate([
+                { transform: 'translate(0, 0)', opacity: 0 },
+                { opacity: opacity, offset: 0.2 },
+                { opacity: opacity, offset: 0.8 },
+                { transform: `translate(${(Math.random()-0.5)*200}px, ${(Math.random()-0.5)*200}px)`, opacity: 0 }
+            ], {
+                duration: duration * 1000,
+                easing: 'ease-in-out',
+                fill: 'forwards'
+            });
+
+            document.body.appendChild(f);
+
+            // 清理旧元素
+            setTimeout(() => {
+                f.remove();
+            }, duration * 1000);
         }
 
-        @keyframes drift {
-            0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-            50% { opacity: 1
+        // 定时生成，保持平衡
+        setInterval(createFirefly, 400);
+
+        // 初始化
+        for(let i=0; i<20; i++) {
+            createFirefly();
+        }
+    </script>
+</body>
+</html>
